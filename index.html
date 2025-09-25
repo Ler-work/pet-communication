@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>寵物溝通預約平台 - 簡易版</title>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <title>寵物溝通預約平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f4e4c1 0%, #e8d5b7 50%, #d4c4a8 100%);
+            background: #faf8f5;
             min-height: 100vh;
             padding: 20px;
             color: #5d4e37;
@@ -29,9 +29,9 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(160, 82, 45, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 60%, rgba(210, 180, 140, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 20%, rgba(210, 180, 140, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(205, 133, 63, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(160, 82, 45, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -47,12 +47,13 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #d2b48c, #cd853f, #a0522d);
-            color: white;
+            background: #e6d7c3;
+            color: #5d4e37;
             padding: 40px;
             text-align: center;
             position: relative;
         }
+        
         
         .header::before {
             content: '🐾';
@@ -75,7 +76,7 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
         .header p {
@@ -108,7 +109,7 @@
             font-size: 1.8em;
             color: #8b4513;
             margin-bottom: 20px;
-            border-bottom: 3px solid #cd853f;
+            border-bottom: 3px solid #d2b48c;
             padding-bottom: 10px;
             position: relative;
         }
@@ -116,226 +117,6 @@
         .section-title::before {
             content: '🐾';
             margin-right: 10px;
-        }
-        
-        .calendar-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .time-selector {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .time-select-group {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .time-select-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #8b4513;
-        }
-        
-        .time-select-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            transition: border-color 0.3s ease;
-        }
-        
-        .time-select-group select:focus {
-            outline: none;
-            border-color: #cd853f;
-            box-shadow: 0 0 0 3px rgba(205, 133, 63, 0.1);
-        }
-        
-        .time-select-group select:disabled {
-            background: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-        
-        .time-management {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid #d2b48c;
-        }
-        
-        .time-management h3 {
-            color: #8b4513;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-        
-        .blocked-times {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .blocked-time-item {
-            background: #f8f9fa;
-            border: 1px solid #d2b48c;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #8b4513;
-            position: relative;
-        }
-        
-        .blocked-time-item .remove-btn {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .add-blocked-time {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .add-blocked-time input,
-        .add-blocked-time select {
-            padding: 8px;
-            border: 1px solid #d2b48c;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .add-blocked-time button {
-            background: #cd853f;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .add-blocked-time button:hover {
-            background: #a0522d;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #cd853f;
-            box-shadow: 0 0 0 3px rgba(205, 133, 63, 0.1);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #cd853f, #a0522d);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-        
-        .submit-btn:hover {
-            background: linear-gradient(135deg, #a0522d, #8b4513);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(205, 133, 63, 0.4);
-        }
-        
-        .submit-btn:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .status-message {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-weight: 600;
-        }
-        
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .status-message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .pet-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
         }
         
         .pricing-section {
@@ -441,6 +222,113 @@
             transform: scale(1.2);
         }
         
+        .time-selection {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #d2b48c;
+        }
+        
+        .time-selection h3 {
+            color: #8b4513;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #cd853f;
+            box-shadow: 0 0 0 3px rgba(205, 133, 63, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .pet-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #cd853f, #a0522d);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #a0522d, #8b4513);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(205, 133, 63, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         /* 隱藏的管理員圖示 */
         .admin-icon {
             position: fixed;
@@ -519,6 +407,179 @@
             background: #c82333;
         }
         
+        /* 預約須知小視窗 */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .intro-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            margin: 20px;
+        }
+        
+        .intro-modal h2 {
+            color: #8b4513;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+        
+        .intro-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #faf8f5;
+            border-radius: 15px;
+            border-left: 4px solid #d2b48c;
+        }
+        
+        .intro-section h3 {
+            color: #8b4513;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .intro-section ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .intro-section li {
+            margin-bottom: 8px;
+            color: #5d4e37;
+        }
+        
+        .intro-button {
+            width: 100%;
+            background: #d2b48c;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .intro-button:hover {
+            background: #cd853f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 180, 140, 0.4);
+        }
+        
+        /* 方案選擇下拉選單 */
+        .pricing-dropdown {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #d2b48c;
+        }
+        
+        .pricing-type-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-type-tab {
+            flex: 1;
+            padding: 15px;
+            background: #f5f5dc;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #8b4513;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-type-tab.active {
+            background: #d2b48c;
+            color: white;
+        }
+        
+        .pricing-options {
+            display: none;
+        }
+        
+        .pricing-options.active {
+            display: block;
+        }
+        
+        .pricing-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .pricing-select:focus {
+            outline: none;
+            border-color: #d2b48c;
+            box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.1);
+        }
+        
+        .pricing-display {
+            background: white;
+            border: 2px solid #d2b48c;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .pricing-amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-note {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .pet-count-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #d2b48c;
+        }
+        
+        .pet-count-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #856404;
+            display: none;
+        }
+        
         .admin-section {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
@@ -551,32 +612,155 @@
             background: #a0522d;
         }
         
+        /* 預約成功對話框樣式 */
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .success-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: successModalIn 0.3s ease-out;
+        }
+        
+        @keyframes successModalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .success-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-subtitle {
+            font-size: 1.2em;
+            color: #8b4513;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .success-reminders {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #d2b48c;
+            margin-bottom: 30px;
+        }
+        
+        .success-reminders h4 {
+            color: #8b4513;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .success-reminders ol {
+            color: #5d4e37;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+        
+        .success-reminders li {
+            margin-bottom: 10px;
+        }
+        
+        .success-close-btn {
+            background: linear-gradient(135deg, #d2b48c, #8b4513);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .success-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+        
+        .blocked-times {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #d2b48c;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .blocked-time-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .add-blocked-time {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .add-blocked-time input,
+        .add-blocked-time select,
+        .add-blocked-time button {
+            padding: 8px 12px;
+            border: 1px solid #d2b48c;
+            border-radius: 5px;
+        }
+        
+        .add-blocked-time button {
+            background: #cd853f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
         .booking-list {
             max-height: 300px;
             overflow-y: auto;
             border: 1px solid #d2b48c;
             border-radius: 8px;
-            padding: 15px;
-            background: white;
+            padding: 10px;
+            margin-top: 15px;
         }
         
         .booking-item {
             background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 5px;
+            padding: 10px;
             margin-bottom: 10px;
             border-left: 4px solid #cd853f;
-        }
-        
-        .booking-item h4 {
-            color: #8b4513;
-            margin-bottom: 8px;
-        }
-        
-        .booking-item p {
-            margin: 3px 0;
-            font-size: 0.9em;
-            color: #666;
         }
         
         @media (max-width: 768px) {
@@ -592,17 +776,57 @@
             .pet-info-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .time-slots {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 預約須知小視窗 -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-modal">
+            <h2>🐾 預約須知</h2>
+            
+            <div class="intro-section">
+                <h3>自我介紹</h3>
+                <ul>
+                    <li>我是小樂，是一個喜歡跟毛孩閒聊的溝通師，家中有兩隻屁貓🐱</li>
+                </ul>
+            </div>
+            
+            <div class="intro-section">
+                <h3>溝通方式</h3>
+                <ul>
+                    <li>以直覺方式進行溝通，會先詢問2-3個問題驗證是否連線成功</li>
+                    <li>ex：毛孩的碗什麼樣式，喜歡的玩具什麼，最喜歡or舒服的姿勢</li>
+                    <li>確認連線成功後，即可開始其他問答（如連線未成功，則結束溝通不收費）</li>
+                </ul>
+            </div>
+            
+            <div class="intro-section">
+                <h3>注意事項</h3>
+                <ul>
+                    <li>動物溝通≠獸醫≠行為矯正，我只能替您轉達及交流毛孩子的想法，涉及寵物生理健康，或是行為相關問題，仍建議尋求專業協助！</li>
+                    <li>目前無接受離世溝通，走失溝通若照片為兩週內可嘗試</li>
+                    <li>如發現為惡意挑釁，則立刻停止溝通，且加入黑名單不在受理預約</li>
+                </ul>
+            </div>
+            
+            <div class="intro-section">
+                <h3>預約確認</h3>
+                <p style="color: #5d4e37; line-height: 1.6;">
+                    如上述介紹閱讀完畢，仍願意預約時段，請點選【我要預約】<br>
+                    我將提供目前可預約時段及需準備資料給您哦！
+                </p>
+            </div>
+            
+            <button class="intro-button" onclick="closeIntroModal()">
+                🐾 我要預約
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
         <div class="header">
-            <h1>🐾 寵物溝通預約平台</h1>
+            <h1>🐾 小樂 寵物溝通預約平台</h1>
             <p>與您的毛孩建立心靈連結，預約專業寵物溝通服務</p>
         </div>
         
@@ -610,91 +834,81 @@
             <div class="schedule-section">
                 <h2 class="section-title">📅 選擇方案與時段</h2>
                 
-                <!-- 價格方案選擇 -->
-                <div class="pricing-section">
+                <!-- 毛孩隻數選擇 -->
+                <div class="pet-count-section">
+                    <div class="pricing-title">
+                        🐾 選擇毛孩隻數
+                        <span style="font-size: 0.8em; color: #6c757d; font-weight: normal;">（三隻以上需分開預約）</span>
+                    </div>
+                    <div class="form-group">
+                        <label>毛孩數量</label>
+                        <select class="pricing-select" id="petCount" onchange="updatePetCount()">
+                            <option value="">請選擇毛孩數量</option>
+                            <option value="1">1隻毛孩</option>
+                            <option value="2">2隻毛孩</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 方案選擇下拉選單 -->
+                <div class="pricing-dropdown" id="pricingSection" style="display: none;">
                     <div class="pricing-title">💰 選擇服務方案</div>
                     
-                    <div class="pet-type-tabs">
-                        <button type="button" class="pet-type-tab active" data-type="single">🐾 單隻毛孩</button>
-                        <button type="button" class="pet-type-tab" data-type="double">🐾🐾 兩隻毛孩</button>
+                    <div class="pricing-type-tabs">
+                        <button type="button" class="pricing-type-tab active" data-type="question">❓ 問題計價</button>
+                        <button type="button" class="pricing-type-tab" data-type="time">⏰ 時間計價</button>
                     </div>
                     
-                    <!-- 單隻毛孩方案 -->
-                    <div class="pricing-plans active" id="single-pet-plans">
-                        <div class="plan-option" data-plan="standard" data-duration="60" data-price="800">
-                            <input type="radio" name="pricingPlan" value="standard" id="plan-standard">
-                            <label for="plan-standard">
-                                <div class="plan-name">標準方案</div>
-                                <div class="plan-price">800 元</div>
-                                <div class="plan-duration">60 分鐘</div>
-                                <div class="plan-questions">約 2-3 個問題</div>
-                            </label>
+                    <!-- 問題計價選項 -->
+                    <div class="pricing-options active" id="question-pricing">
+                        <div class="form-group">
+                            <label>選擇問題數量</label>
+                            <select class="pricing-select" id="questionCount" onchange="updateQuestionPricing()">
+                                <option value="">請選擇問題數量</option>
+                            </select>
+                            <small style="color: #6c757d; font-size: 0.9em; margin-top: 5px; display: block;">
+                                請以總題數下單，一題為一隻毛孩<br>
+                                如兩隻毛孩各問一題，則選購兩題
+                            </small>
                         </div>
-                        
-                        <div class="plan-option" data-plan="deep" data-duration="120" data-price="1500">
-                            <input type="radio" name="pricingPlan" value="deep" id="plan-deep">
-                            <label for="plan-deep">
-                                <div class="plan-name">深度方案</div>
-                                <div class="plan-price">1500 元</div>
-                                <div class="plan-duration">120 分鐘</div>
-                                <div class="plan-questions">約 5-6 個問題</div>
-                            </label>
+                        <div class="pricing-display" id="questionDisplay" style="display: none;">
+                            <div class="pricing-amount" id="questionAmount">NT$ 0</div>
+                            <div class="pricing-note" id="questionNote"></div>
                         </div>
                     </div>
                     
-                    <!-- 兩隻毛孩方案 -->
-                    <div class="pricing-plans" id="double-pet-plans">
-                        <div class="plan-option" data-plan="quick" data-duration="60" data-price="1000">
-                            <input type="radio" name="pricingPlan" value="quick" id="plan-quick">
-                            <label for="plan-quick">
-                                <div class="plan-name">快問版</div>
-                                <div class="plan-price">1000 元</div>
-                                <div class="plan-duration">60 分鐘</div>
-                                <div class="plan-questions">每隻約 1-2 個問題</div>
-                            </label>
+                    <!-- 時間計價選項 -->
+                    <div class="pricing-options" id="time-pricing">
+                        <div class="form-group">
+                            <label>選擇時間方案</label>
+                            <select class="pricing-select" id="timePlan" onchange="updateTimePricing()">
+                                <option value="">請選擇時間方案</option>
+                            </select>
                         </div>
-                        
-                        <div class="plan-option" data-plan="standard-double" data-duration="90" data-price="1300">
-                            <input type="radio" name="pricingPlan" value="standard-double" id="plan-standard-double">
-                            <label for="plan-standard-double">
-                                <div class="plan-name">標準版</div>
-                                <div class="plan-price">1300 元</div>
-                                <div class="plan-duration">90 分鐘</div>
-                                <div class="plan-questions">每隻約 2-3 個問題</div>
-                            </label>
-                        </div>
-                        
-                        <div class="plan-option" data-plan="separate" data-duration="120" data-price="1600">
-                            <input type="radio" name="pricingPlan" value="separate" id="plan-separate">
-                            <label for="plan-separate">
-                                <div class="plan-name">分開聊</div>
-                                <div class="plan-price">1600 元</div>
-                                <div class="plan-duration">120 分鐘</div>
-                                <div class="plan-questions">每隻約 2-3 個問題，總共 5-6 個問題</div>
-                            </label>
+                        <div class="pricing-display" id="timeDisplay" style="display: none;">
+                            <div class="pricing-amount" id="timeAmount">NT$ 0</div>
+                            <div class="pricing-note">現場加時：每10分鐘 NT$ 200</div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 時段選擇 -->
-                <div class="calendar-container">
-                    <h3 style="color: #8b4513; margin-bottom: 15px; font-size: 1.2em;">📅 選擇預約時段</h3>
-                    <div class="time-selector">
-                        <div class="time-select-group">
-                            <label for="dateSelect">選擇日期</label>
-                            <select id="dateSelect" onchange="updateTimeSlots()">
-                                <option value="">請先選擇方案</option>
-                            </select>
-                        </div>
-                        <div class="time-select-group">
-                            <label for="timeSelect">選擇時間</label>
-                            <select id="timeSelect" onchange="selectTimeSlot()">
-                                <option value="">請先選擇日期</option>
-                            </select>
-                        </div>
+                <!-- 時間選擇 -->
+                <div class="time-selection">
+                    <h3>🕒 選擇預約時間</h3>
+                    <div class="form-group">
+                        <label for="appointmentDate">選擇日期</label>
+                        <select id="appointmentDate" onchange="updateTimeSlots()">
+                            <option value="">請先選擇方案</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appointmentTime">選擇時間</label>
+                        <select id="appointmentTime" onchange="selectTimeSlot()">
+                            <option value="">請先選擇日期</option>
+                        </select>
                     </div>
                 </div>
-                
             </div>
             
             <div class="form-section">
@@ -715,64 +929,16 @@
                     
                     <div class="form-group">
                         <label for="ownerLine">LINE名稱 *</label>
-                        <input type="text" id="ownerLine" name="ownerLine" required placeholder="請輸入您的LINE顯示名稱">
+                        <input type="text" id="ownerLine" name="ownerLine" required>
                     </div>
                     
-                    <div class="pet-info-grid">
-                        <div class="form-group">
-                            <label for="petName">第一隻寵物姓名 *</label>
-                            <input type="text" id="petName" name="petName" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="petSpecies">第一隻寵物種類 *</label>
-                            <select id="petSpecies" name="petSpecies" required>
-                                <option value="">請選擇</option>
-                                <option value="dog">狗狗</option>
-                                <option value="cat">貓咪</option>
-                                <option value="bird">鳥類</option>
-                                <option value="rabbit">兔子</option>
-                                <option value="hamster">倉鼠</option>
-                                <option value="other">其他</option>
-                            </select>
-                        </div>
+                    <!-- 寵物資訊將根據毛孩隻數動態生成 -->
+                    <div id="petInfoContainer">
+                        <!-- 寵物資訊欄位將在這裡動態生成 -->
                     </div>
                     
                     <div class="form-group">
-                        <label for="petAge">第一隻寵物年齡</label>
-                        <input type="text" id="petAge" name="petAge" placeholder="例如：3歲、6個月">
-                    </div>
-                    
-                    <!-- 第二隻寵物資訊（預設隱藏） -->
-                    <div id="secondPetInfo" style="display: none;">
-                        <div class="pet-info-grid">
-                            <div class="form-group">
-                                <label for="petName2">第二隻寵物姓名 *</label>
-                                <input type="text" id="petName2" name="petName2">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="petSpecies2">第二隻寵物種類 *</label>
-                                <select id="petSpecies2" name="petSpecies2">
-                                    <option value="">請選擇</option>
-                                    <option value="dog">狗狗</option>
-                                    <option value="cat">貓咪</option>
-                                    <option value="bird">鳥類</option>
-                                    <option value="rabbit">兔子</option>
-                                    <option value="hamster">倉鼠</option>
-                                    <option value="other">其他</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="petAge2">第二隻寵物年齡</label>
-                            <input type="text" id="petAge2" name="petAge2" placeholder="例如：3歲、6個月">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="selectedTimeSlot">選擇時段 *</label>
+                        <label for="selectedTimeSlot">已選擇時段 *</label>
                         <input type="text" id="selectedTimeSlot" name="selectedTimeSlot" readonly 
                                placeholder="請先選擇上方時段" style="background-color: #f8f9fa;">
                     </div>
@@ -788,7 +954,7 @@
                         <textarea id="specialRequests" name="specialRequests" 
                                   placeholder="請描述您希望了解的問題，例如：寵物的行為問題、健康狀況、情感需求等..."></textarea>
                     </div>
-                    
+
                     <button type="submit" class="submit-btn" id="submitBtn" disabled>
                         📅 提交預約申請
                     </button>
@@ -835,9 +1001,18 @@
             
             <!-- 預約管理 -->
             <div class="admin-section">
+                <div class="admin-title">📧 通知設定</div>
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">設定預約通知的Email和LINE服務</p>
+                <button class="admin-btn" onclick="openNotificationSettings()">Email通知設定</button>
+                <button class="admin-btn" onclick="openLineIntegrationSettings()">LINE整合設定</button>
+                <button class="admin-btn" onclick="testNotification()">測試Email通知</button>
+            </div>
+            
+            <div class="admin-section">
                 <div class="admin-title">📋 預約管理</div>
                 <button class="admin-btn" onclick="viewAllBookings()">查看所有預約</button>
                 <button class="admin-btn" onclick="exportBookings()">匯出預約資料</button>
+                <button class="admin-btn" onclick="testBlockingFunction()">測試封鎖功能</button>
                 <button class="admin-btn" onclick="clearAllBookings()">清除所有預約</button>
                 <div id="bookingList" class="booking-list" style="display: none;"></div>
             </div>
@@ -847,15 +1022,360 @@
     <script>
         // EmailJS 設定
         (function(){
-            emailjs.init("YOUR_EMAILJS_USER_ID"); // 請替換為您的 EmailJS User ID
+            // 從 localStorage 讀取設定，如果沒有則使用預設值
+            const emailjsUserId = localStorage.getItem('emailjs_user_id') || "YOUR_EMAILJS_USER_ID";
+            const emailjsServiceId = localStorage.getItem('emailjs_service_id') || "service_052vkz5";
+            const emailjsTemplateId = localStorage.getItem('emailjs_template_id') || "YOUR_TEMPLATE_ID";
+            
+            // 使用新版本的EmailJS初始化方式
+            if (emailjsUserId !== "YOUR_EMAILJS_USER_ID") {
+                emailjs.init(emailjsUserId);
+            }
+            
+            // 儲存設定到全域變數
+            window.emailjsConfig = {
+                serviceId: emailjsServiceId,
+                templateId: emailjsTemplateId
+            };
         })();
         
-        let selectedTimeSlot = null;
+        // 全域變數
         let selectedPlan = null;
-        let currentPetType = 'single';
-        let availableTimeSlots = [];
-        let blockedTimes = JSON.parse(localStorage.getItem('blockedTimes') || '[]');
-        let isAdminMode = false;
+        let selectedTimeSlot = null;
+        let currentPricingType = 'question';
+        let selectedPetCount = 1;
+        let blockedTimes = [];
+        
+        // 關閉預約須知小視窗
+        function closeIntroModal() {
+            document.getElementById('introOverlay').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+        }
+        
+        // 切換方案類型
+        function switchPricingType(type) {
+            currentPricingType = type;
+            
+            // 更新標籤狀態
+            document.querySelectorAll('.pricing-type-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // 更新選項顯示
+            document.querySelectorAll('.pricing-options').forEach(options => {
+                options.classList.remove('active');
+            });
+            document.getElementById(`${type}-pricing`).classList.add('active');
+            
+            // 清除選擇
+            clearPricingSelection();
+        }
+        
+        // 清除方案選擇
+        function clearPricingSelection() {
+            selectedPlan = null;
+            document.getElementById('questionCount').value = '';
+            document.getElementById('timePlan').value = '';
+            document.getElementById('questionDisplay').style.display = 'none';
+            document.getElementById('timeDisplay').style.display = 'none';
+            document.getElementById('selectedPlan').value = '';
+            document.getElementById('submitBtn').disabled = true;
+        }
+        
+        // 更新問題計價
+        function updateQuestionPricing() {
+            const questionCount = document.getElementById('questionCount').value;
+            const display = document.getElementById('questionDisplay');
+            const amount = document.getElementById('questionAmount');
+            const note = document.getElementById('questionNote');
+            
+            if (questionCount) {
+                const price = parseInt(questionCount) * 300;
+                amount.textContent = `NT$ ${price.toLocaleString()}`;
+                
+                if (parseInt(questionCount) >= 3) {
+                    note.textContent = '建議選購60分鐘方案';
+                    note.style.color = '#dc3545';
+                } else {
+                    note.textContent = '';
+                }
+                
+                display.style.display = 'block';
+                
+                selectedPlan = {
+                    type: 'question',
+                    count: parseInt(questionCount),
+                    price: price,
+                    display: `${questionCount}題 - NT$ ${price.toLocaleString()}`
+                };
+                
+                document.getElementById('selectedPlan').value = selectedPlan.display;
+                updateTimeSlots();
+                updateSubmitButton();
+            } else {
+                display.style.display = 'none';
+                selectedPlan = null;
+                document.getElementById('selectedPlan').value = '';
+                updateSubmitButton();
+            }
+        }
+        
+        // 更新時間計價
+        function updateTimePricing() {
+            const timePlan = document.getElementById('timePlan').value;
+            const display = document.getElementById('timeDisplay');
+            const amount = document.getElementById('timeAmount');
+            
+            if (timePlan) {
+                // 根據毛孩隻數和時間設定價格
+                const prices = selectedPetCount === 1 ? {
+                    '60': 800,
+                    '120': 1600
+                } : {
+                    '60': 1000,
+                    '90': 1300,
+                    '120': 1600
+                };
+                
+                const price = prices[timePlan];
+                amount.textContent = `NT$ ${price.toLocaleString()}`;
+                display.style.display = 'block';
+                
+                selectedPlan = {
+                    type: 'time',
+                    duration: parseInt(timePlan),
+                    price: price,
+                    display: `${timePlan}分鐘 - NT$ ${price.toLocaleString()}`
+                };
+                
+                document.getElementById('selectedPlan').value = selectedPlan.display;
+                updateTimeSlots();
+                updateSubmitButton();
+            } else {
+                display.style.display = 'none';
+                selectedPlan = null;
+                document.getElementById('selectedPlan').value = '';
+                updateSubmitButton();
+            }
+        }
+        
+        // 更新毛孩隻數
+        function updatePetCount() {
+            const petCount = document.getElementById('petCount').value;
+            const pricingSection = document.getElementById('pricingSection');
+            
+            if (petCount) {
+                selectedPetCount = parseInt(petCount);
+                
+                // 顯示方案選擇區域
+                pricingSection.style.display = 'block';
+                
+                // 更新問題計價選項
+                updateQuestionOptions();
+                
+                // 更新時間計價選項
+                updateTimeOptions();
+                
+                // 生成寵物資訊欄位
+                generatePetInfoFields();
+                
+                // 更新日期選項
+                updateDateOptions();
+                
+                updateSubmitButton();
+            } else {
+                selectedPetCount = 1;
+                pricingSection.style.display = 'none';
+                clearPricingSelection();
+                updateSubmitButton();
+            }
+        }
+        
+        // 更新問題計價選項
+        function updateQuestionOptions() {
+            const questionSelect = document.getElementById('questionCount');
+            questionSelect.innerHTML = '<option value="">請選擇問題數量</option>';
+            
+            // 根據毛孩隻數生成選項
+            const maxQuestions = selectedPetCount * 3; // 每隻毛孩最多3題
+            
+            for (let i = 1; i <= maxQuestions; i++) {
+                const price = i * 300;
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${i}題 - NT$ ${price.toLocaleString()}`;
+                questionSelect.appendChild(option);
+            }
+        }
+        
+        // 更新時間計價選項
+        function updateTimeOptions() {
+            const timeSelect = document.getElementById('timePlan');
+            timeSelect.innerHTML = '<option value="">請選擇時間方案</option>';
+            
+            // 根據毛孩隻數設定價格
+            const timeOptions = selectedPetCount === 1 ? [
+                { duration: 60, price: 800 },
+                { duration: 120, price: 1600 }
+            ] : [
+                { duration: 60, price: 1000 },
+                { duration: 90, price: 1300 },
+                { duration: 120, price: 1600 }
+            ];
+            
+            timeOptions.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.duration;
+                optionElement.textContent = `${option.duration}分鐘 - NT$ ${option.price.toLocaleString()}`;
+                timeSelect.appendChild(optionElement);
+            });
+        }
+        
+        // 生成寵物資訊欄位
+        function generatePetInfoFields() {
+            const container = document.getElementById('petInfoContainer');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= selectedPetCount; i++) {
+                const petDiv = document.createElement('div');
+                petDiv.className = 'pet-info-section';
+                petDiv.style.marginBottom = '25px';
+                petDiv.style.padding = '20px';
+                petDiv.style.background = 'rgba(255, 255, 255, 0.8)';
+                petDiv.style.borderRadius = '10px';
+                petDiv.style.border = '2px solid #d2b48c';
+                
+                petDiv.innerHTML = `
+                    <h4 style="color: #8b4513; margin-bottom: 15px;">第${i}隻毛孩資訊</h4>
+                    <div class="pet-info-grid">
+                        <div class="form-group">
+                            <label for="petName${i}">寵物姓名 *</label>
+                            <input type="text" id="petName${i}" name="petName${i}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="petSpecies${i}">寵物種類 *</label>
+                            <select id="petSpecies${i}" name="petSpecies${i}" required>
+                                <option value="">請選擇</option>
+                                <option value="dog">狗狗</option>
+                                <option value="cat">貓咪</option>
+                                <option value="bird">鳥類</option>
+                                <option value="rabbit">兔子</option>
+                                <option value="hamster">倉鼠</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="petAge${i}">寵物年齡</label>
+                        <input type="text" id="petAge${i}" name="petAge${i}" placeholder="例如：3歲、6個月">
+                    </div>
+                `;
+                
+                container.appendChild(petDiv);
+            }
+        }
+        
+        // 更新提交按鈕狀態
+        function updateSubmitButton() {
+            const hasPlan = selectedPlan !== null;
+            const hasTimeSlot = selectedTimeSlot !== null;
+            const hasPetCount = selectedPetCount > 0;
+            
+            document.getElementById('submitBtn').disabled = !(hasPlan && hasTimeSlot && hasPetCount);
+        }
+        
+        // 載入被封鎖的時段
+        function loadBlockedTimes() {
+            const saved = localStorage.getItem('blockedTimes');
+            if (saved) {
+                blockedTimes = JSON.parse(saved);
+                updateBlockedTimesDisplay();
+            }
+        }
+        
+        // 測試封鎖功能
+        function testBlockingFunction() {
+            const testTimeSlot = "1/15 (週一) 上午10:00";
+            console.log('測試封鎖功能，時段：', testTimeSlot);
+            blockBookedTimeSlot(testTimeSlot);
+        }
+        
+        // 更新被封鎖時段顯示
+        function updateBlockedTimesDisplay() {
+            const container = document.getElementById('blockedTimes');
+            container.innerHTML = '';
+            
+            if (blockedTimes.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">目前沒有被封鎖的時段</p>';
+                return;
+            }
+            
+            blockedTimes.forEach((time, index) => {
+                const item = document.createElement('div');
+                item.className = 'blocked-time-item';
+                
+                // 根據封鎖原因設定不同的樣式
+                const reasonColor = time.reason === '客戶預約' ? '#28a745' : '#dc3545';
+                const reasonText = time.reason === '客戶預約' ? '📅 已預約' : '🚫 手動封鎖';
+                
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 5px; margin-bottom: 5px;">
+                        <div>
+                            <span style="font-weight: bold;">${time.date} ${time.time}</span>
+                            <span style="color: ${reasonColor}; font-size: 0.9em; margin-left: 10px;">${reasonText}</span>
+                        </div>
+                        <button onclick="removeBlockedTime(${index})" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.8em;">移除</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // 新增封鎖時段
+        function addBlockedTime() {
+            const date = document.getElementById('blockDate').value;
+            const time = document.getElementById('blockTime').value;
+            
+            if (!date || !time) {
+                alert('請選擇日期和時間');
+                return;
+            }
+            
+            const blockedTime = { 
+                date, 
+                time, 
+                reason: '手動封鎖',
+                timestamp: new Date().toISOString(),
+                bookingId: null
+            };
+            blockedTimes.push(blockedTime);
+            localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
+            updateBlockedTimesDisplay();
+            
+            // 清空輸入
+            document.getElementById('blockDate').value = '';
+            document.getElementById('blockTime').value = '';
+            
+            // 如果已選擇方案，重新更新時段
+            if (selectedPlan) {
+                updateTimeSlots();
+            }
+        }
+        
+        // 移除封鎖時段
+        function removeBlockedTime(index) {
+            blockedTimes.splice(index, 1);
+            localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
+            updateBlockedTimesDisplay();
+            
+            // 如果已選擇方案，重新更新時段
+            if (selectedPlan) {
+                updateTimeSlots();
+            }
+        }
         
         // 寵物類型切換
         function switchPetType(type) {
@@ -901,6 +1421,9 @@
                 radio.checked = false;
             });
             document.getElementById('selectedPlan').value = '';
+            document.getElementById('appointmentDate').innerHTML = '<option value="">請先選擇方案</option>';
+            document.getElementById('appointmentTime').innerHTML = '<option value="">請先選擇日期</option>';
+            document.getElementById('selectedTimeSlot').value = '';
             document.getElementById('submitBtn').disabled = true;
         }
         
@@ -928,179 +1451,204 @@
             document.getElementById('selectedPlan').value = 
                 `${selectedPlan.name} - ${selectedPlan.price} (${selectedPlan.duration}分鐘)`;
             
-            // 重新載入時段
-            loadAvailableTimeSlots();
-        }
-        
-        // 載入可用時段
-        function loadAvailableTimeSlots() {
-            if (!selectedPlan) {
-                document.getElementById('dateSelect').innerHTML = '<option value="">請先選擇方案</option>';
-                document.getElementById('timeSelect').innerHTML = '<option value="">請先選擇日期</option>';
-                return;
-            }
-            
-            availableTimeSlots = generateTimeSlots();
+            // 更新日期選項
             updateDateOptions();
-            loadBlockedTimes();
-        }
-        
-        // 生成時段（根據選擇的方案調整時長）
-        function generateTimeSlots() {
-            const slots = [];
-            const now = new Date();
-            const duration = selectedPlan ? parseInt(selectedPlan.duration) : 60;
-            
-            // 生成未來14天的時段
-            for (let i = 1; i <= 14; i++) {
-                const date = new Date(now);
-                date.setDate(now.getDate() + i);
-                
-                // 跳過週日
-                if (date.getDay() === 0) continue;
-                
-                // 根據方案時長調整時段
-                let daySlots = [];
-                if (duration <= 60) {
-                    daySlots = [
-                        { time: '09:00', duration: duration },
-                        { time: '10:00', duration: duration },
-                        { time: '14:00', duration: duration },
-                        { time: '16:00', duration: duration },
-                        { time: '19:00', duration: duration }
-                    ];
-                } else if (duration <= 90) {
-                    daySlots = [
-                        { time: '09:00', duration: duration },
-                        { time: '14:00', duration: duration },
-                        { time: '19:00', duration: duration }
-                    ];
-                } else {
-                    daySlots = [
-                        { time: '09:00', duration: duration },
-                        { time: '14:00', duration: duration }
-                    ];
-                }
-                
-                daySlots.forEach(slot => {
-                    const slotDate = new Date(date);
-                    const [hours, minutes] = slot.time.split(':');
-                    slotDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                    
-                    const dateStr = formatDateForSelect(slotDate);
-                    const timeStr = slot.time;
-                    
-                    // 檢查是否被封鎖
-                    const isBlocked = blockedTimes.some(blocked => 
-                        blocked.date === dateStr && blocked.time === timeStr
-                    );
-                    
-                    slots.push({
-                        id: `slot_${date.getTime()}_${slot.time}`,
-                        date: slotDate,
-                        dateStr: dateStr,
-                        time: slot.time,
-                        duration: slot.duration,
-                        available: !isBlocked && Math.random() > 0.2 // 模擬可用性
-                    });
-                });
-            }
-            
-            return slots;
         }
         
         // 更新日期選項
         function updateDateOptions() {
-            const dateSelect = document.getElementById('dateSelect');
-            const dates = [...new Set(availableTimeSlots.map(slot => slot.dateStr))].sort();
-            
+            const dateSelect = document.getElementById('appointmentDate');
             dateSelect.innerHTML = '<option value="">請選擇日期</option>';
-            dates.forEach(date => {
+            
+            const today = new Date();
+            for (let i = 1; i <= 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                // 跳過週日
+                if (date.getDay() === 0) continue;
+                
+                const dateStr = formatDateForSelect(date);
                 const option = document.createElement('option');
-                option.value = date;
-                option.textContent = date;
+                option.value = dateStr;
+                option.textContent = dateStr;
                 dateSelect.appendChild(option);
-            });
+            }
         }
         
         // 更新時段選項
         function updateTimeSlots() {
-            const dateSelect = document.getElementById('dateSelect');
-            const timeSelect = document.getElementById('timeSelect');
-            const selectedDate = dateSelect.value;
+            const dateSelect = document.getElementById('appointmentDate');
+            const timeSelect = document.getElementById('appointmentTime');
+            
+            if (!selectedPlan || !dateSelect.value) {
+                timeSelect.innerHTML = '<option value="">請先選擇日期</option>';
+                return;
+            }
             
             timeSelect.innerHTML = '<option value="">請選擇時間</option>';
             
-            if (!selectedDate) return;
+            let timeSlots = [];
             
-            const availableTimes = availableTimeSlots
-                .filter(slot => slot.dateStr === selectedDate && slot.available)
-                .sort((a, b) => a.time.localeCompare(b.time));
+            // 統一使用2小時間隔的時段
+            timeSlots = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '21:00'];
             
-            availableTimes.forEach(slot => {
-                const option = document.createElement('option');
-                option.value = slot.id;
-                option.textContent = formatTimeDisplay(slot.time);
-                timeSelect.appendChild(option);
+            timeSlots.forEach(time => {
+                // 檢查是否被封鎖
+                const isBlocked = blockedTimes.some(blocked => 
+                    blocked.date === dateSelect.value && blocked.time === time
+                );
+                
+                if (!isBlocked) {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = formatTimeDisplay(time);
+                    timeSelect.appendChild(option);
+                }
             });
         }
         
         // 選擇時段
         function selectTimeSlot() {
-            const timeSelect = document.getElementById('timeSelect');
-            const selectedSlotId = timeSelect.value;
+            const dateSelect = document.getElementById('appointmentDate');
+            const timeSelect = document.getElementById('appointmentTime');
             
-            if (!selectedSlotId) {
-                selectedTimeSlot = null;
+            if (!dateSelect.value || !timeSelect.value) {
                 document.getElementById('selectedTimeSlot').value = '';
-                document.getElementById('submitBtn').disabled = true;
+                updateSubmitButton();
                 return;
             }
             
-            selectedTimeSlot = availableTimeSlots.find(slot => slot.id === selectedSlotId);
-            if (selectedTimeSlot) {
-                document.getElementById('selectedTimeSlot').value = 
-                    `${selectedTimeSlot.dateStr} ${formatTimeDisplay(selectedTimeSlot.time)}`;
-                document.getElementById('submitBtn').disabled = false;
-            }
+            selectedTimeSlot = {
+                date: dateSelect.value,
+                time: timeSelect.value
+            };
+            
+            document.getElementById('selectedTimeSlot').value = 
+                `${dateSelect.value} ${formatTimeDisplay(timeSelect.value)}`;
+            
+            updateSubmitButton();
         }
         
-        // 格式化日期用於選擇器
+        // 格式化日期用於選擇
         function formatDateForSelect(date) {
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            return `${month}/${day}`;
-        }
-        
-        // 格式化時間顯示
-        function formatTimeDisplay(time) {
-            const [hours, minutes] = time.split(':');
-            const hour = parseInt(hours);
-            if (hour < 12) {
-                return `上午${hour}:${minutes}`;
-            } else if (hour === 12) {
-                return `下午${hour}:${minutes}`;
-            } else {
-                return `下午${hour - 12}:${minutes}`;
-            }
-        }
-        
-        // 格式化日期
-        function formatDate(date) {
             const month = date.getMonth() + 1;
             const day = date.getDate();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
             const weekday = weekdays[date.getDay()];
-            return `${month}月${day}日 (週${weekday})`;
+            return `${month}/${day} (週${weekday})`;
         }
         
-        // 添加分鐘
-        function addMinutes(time, minutes) {
-            const [hours, mins] = time.split(':').map(Number);
-            const totalMinutes = hours * 60 + mins + minutes;
-            const newHours = Math.floor(totalMinutes / 60);
-            const newMins = totalMinutes % 60;
-            return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
+        // 格式化時間顯示
+        function formatTimeDisplay(time) {
+            const hour = parseInt(time.split(':')[0]);
+            if (hour < 12) {
+                return `上午${hour}:00`;
+            } else if (hour === 12) {
+                return `下午12:00`;
+            } else {
+                return `下午${hour - 12}:00`;
+            }
+        }
+        
+        // 儲存預約
+        function saveBooking(bookingData) {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            bookingData.id = Date.now();
+            bookingData.timestamp = new Date().toISOString();
+            bookings.push(bookingData);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+        }
+        
+        // 自動封鎖預約時段
+        function blockBookedTimeSlot(timeSlotString) {
+            if (!timeSlotString) {
+                console.log('時段字串為空，無法封鎖');
+                return;
+            }
+            
+            console.log('嘗試封鎖時段：', timeSlotString);
+            
+            // 解析時段字串，例如："1/15 (週一) 上午10:00"
+            const timeSlotMatch = timeSlotString.match(/(\d{1,2}\/\d{1,2}\s+\(週[一二三四五六日]\))\s+(上午|下午)(\d{1,2}):(\d{2})/);
+            if (!timeSlotMatch) {
+                console.log('時段格式解析失敗：', timeSlotString);
+                return;
+            }
+            
+            const [, dateStr, period, hour, minute] = timeSlotMatch;
+            console.log('解析結果：', { dateStr, period, hour, minute });
+            
+            // 轉換為24小時制
+            let hour24 = parseInt(hour);
+            if (period === '下午' && hour24 !== 12) {
+                hour24 += 12;
+            } else if (period === '上午' && hour24 === 12) {
+                hour24 = 0;
+            }
+            
+            // 格式化時間為 HH:MM
+            const timeStr = `${hour24.toString().padStart(2, '0')}:${minute}`;
+            console.log('轉換後時間：', timeStr);
+            
+            // 檢查是否已經被封鎖
+            const blockedTimes = JSON.parse(localStorage.getItem('blockedTimes') || '[]');
+            const isAlreadyBlocked = blockedTimes.some(blocked => 
+                blocked.date === dateStr && blocked.time === timeStr
+            );
+            
+            if (isAlreadyBlocked) {
+                console.log('時段已被封鎖，跳過：', dateStr, timeStr);
+                return;
+            }
+            
+            // 添加封鎖時段
+            blockedTimes.push({
+                date: dateStr,
+                time: timeStr,
+                reason: '客戶預約',
+                timestamp: new Date().toISOString(),
+                bookingId: `booking_${Date.now()}`
+            });
+            
+            localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
+            console.log(`已自動封鎖時段：${dateStr} ${timeStr}`);
+            
+            // 更新封鎖時段顯示
+            updateBlockedTimesDisplay();
+        }
+        
+        // 發送Email通知
+        function sendEmailNotification(bookingData) {
+            // 構建寵物資訊字串
+            let petInfo = '';
+            bookingData.pets.forEach((pet, index) => {
+                petInfo += `第${index + 1}隻寵物：${pet.name} (${pet.species})`;
+                if (pet.age) {
+                    petInfo += `，年齡：${pet.age}`;
+                }
+                petInfo += '\n';
+            });
+            
+            const templateParams = {
+                to_email: 'sky850619@gmail.com', // 您的Email地址
+                owner_name: bookingData.ownerName,
+                owner_phone: bookingData.ownerPhone,
+                owner_line: bookingData.ownerLine,
+                pet_count: bookingData.petCount,
+                pet_info: petInfo.trim(),
+                selected_plan: bookingData.selectedPlan,
+                selected_time: bookingData.selectedTimeSlot,
+                special_requests: bookingData.specialRequests || '無',
+                booking_time: new Date().toLocaleString('zh-TW')
+            };
+            
+            emailjs.send(window.emailjsConfig.serviceId, window.emailjsConfig.templateId, templateParams)
+                .then(function(response) {
+                    console.log('Email 發送成功', response.status, response.text);
+                }, function(error) {
+                    console.log('Email 發送失敗', error);
+                });
         }
         
         // 顯示狀態訊息
@@ -1114,118 +1662,356 @@
             }, 3000);
         }
         
-        // 儲存預約到本地儲存
-        function saveBooking(bookingData) {
-            const bookings = JSON.parse(localStorage.getItem('petBookings') || '[]');
-            const booking = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                ...bookingData
-            };
-            bookings.push(booking);
-            localStorage.setItem('petBookings', JSON.stringify(bookings));
-            return booking;
-        }
-        
-        // 載入封鎖時段
-        function loadBlockedTimes() {
-            const container = document.getElementById('blockedTimes');
-            container.innerHTML = '';
+        // 顯示預約成功對話框
+        function showBookingSuccessModal() {
+            // 創建覆蓋層
+            const overlay = document.createElement('div');
+            overlay.className = 'success-overlay';
+            overlay.id = 'successOverlay';
             
-            if (blockedTimes.length === 0) {
-                container.innerHTML = '<p style="color: #666; text-align: center;">目前沒有封鎖的時段</p>';
-                return;
-            }
+            // 創建對話框內容
+            overlay.innerHTML = `
+                <div class="success-modal">
+                    <div class="success-title">預約成功！</div>
+                    <div class="success-subtitle">溫馨提醒</div>
+                    
+                    <div class="success-reminders">
+                        <h4>📋 重要事項</h4>
+                        <ol>
+                            <li>預約成功後請記得回到LINE提供毛孩照片呦！</li>
+                            <li>如需取消服務，請於3日前告知</li>
+                            <li style="white-space: nowrap;">如未提前告知而爽約，則列入黑名單，不得再預約</li>
+                        </ol>
+                    </div>
+                    
+                    <button class="success-close-btn" onclick="closeSuccessModal()">
+                        我知道了
+                    </button>
+                </div>
+            `;
             
-            blockedTimes.forEach((blocked, index) => {
-                const item = document.createElement('div');
-                item.className = 'blocked-time-item';
-                item.innerHTML = `
-                    ${blocked.date} ${formatTimeDisplay(blocked.time)}
-                    <button class="remove-btn" onclick="removeBlockedTime(${index})">×</button>
-                `;
-                container.appendChild(item);
+            // 添加到頁面
+            document.body.appendChild(overlay);
+            
+            // 點擊覆蓋層關閉對話框
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeSuccessModal();
+                }
             });
         }
         
-        // 新增封鎖時段
-        function addBlockedTime() {
-            const dateInput = document.getElementById('blockDate');
-            const timeSelect = document.getElementById('blockTime');
-            
-            if (!dateInput.value) {
-                alert('請選擇日期');
-                return;
+        // 關閉預約成功對話框
+        function closeSuccessModal() {
+            const overlay = document.getElementById('successOverlay');
+            if (overlay) {
+                overlay.remove();
             }
-            
-            const dateStr = formatDateForSelect(new Date(dateInput.value));
-            const timeStr = timeSelect.value;
-            
-            // 檢查是否已存在
-            const exists = blockedTimes.some(blocked => 
-                blocked.date === dateStr && blocked.time === timeStr
-            );
-            
-            if (exists) {
-                alert('此時段已經被封鎖');
-                return;
-            }
-            
-            blockedTimes.push({ date: dateStr, time: timeStr });
-            localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
-            
-            // 清空輸入
-            dateInput.value = '';
-            timeSelect.selectedIndex = 0;
-            
-            // 重新載入
-            loadBlockedTimes();
-            loadAvailableTimeSlots();
-            
-            showStatusMessage('封鎖時段已新增', 'success');
         }
         
-        // 移除封鎖時段
-        function removeBlockedTime(index) {
-            blockedTimes.splice(index, 1);
-            localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
-            loadBlockedTimes();
-            loadAvailableTimeSlots();
-            showStatusMessage('封鎖時段已移除', 'success');
-        }
-        
-        // 發送Email通知
-        function sendEmailNotification(bookingData) {
-            const templateParams = {
-                to_email: 'sky850619@gmail.com',
-                owner_name: bookingData.ownerName,
-                owner_phone: bookingData.ownerPhone,
-                owner_line: bookingData.ownerLine,
-                pet_name: bookingData.petName,
-                pet_species: bookingData.petSpecies,
-                pet_age: bookingData.petAge || '未提供',
-                pet_name2: bookingData.petName2 || '',
-                pet_species2: bookingData.petSpecies2 || '',
-                pet_age2: bookingData.petAge2 || '',
-                plan_name: selectedPlan.name,
-                plan_price: selectedPlan.price,
-                plan_duration: selectedPlan.duration,
-                appointment_date: selectedTimeSlot.dateStr,
-                appointment_time: formatTimeDisplay(selectedTimeSlot.time),
-                special_requests: bookingData.specialRequests || '無',
-                booking_time: new Date().toLocaleString()
+        // 開啟通知設定
+        function openNotificationSettings() {
+            const currentUserId = localStorage.getItem('emailjs_user_id') || '';
+            const currentServiceId = localStorage.getItem('emailjs_service_id') || 'service_052vkz5';
+            const currentTemplateId = localStorage.getItem('emailjs_template_id') || '';
+            
+            // 創建設定對話框
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            overlay.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 20px;
+                    padding: 40px;
+                    max-width: 500px;
+                    width: 90%;
+                    text-align: center;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                ">
+                    <h2 style="color: #8b4513; margin-bottom: 30px;">📧 Email通知設定</h2>
+                    
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: #5d4e37; font-weight: bold;">User ID:</label>
+                        <input type="text" id="emailjsUserId" value="${currentUserId}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #d2b48c; border-radius: 8px; font-size: 14px;"
+                               placeholder="請輸入您的EmailJS User ID">
+                    </div>
+                    
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: #5d4e37; font-weight: bold;">Service ID:</label>
+                        <input type="text" id="emailjsServiceId" value="${currentServiceId}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #d2b48c; border-radius: 8px; font-size: 14px; background: #f8f9fa;"
+                               readonly>
+                        <small style="color: #6c757d;">已預設為您的Service ID</small>
+                    </div>
+                    
+                    <div style="text-align: left; margin-bottom: 30px;">
+                        <label style="display: block; margin-bottom: 5px; color: #5d4e37; font-weight: bold;">Template ID:</label>
+                        <input type="text" id="emailjsTemplateId" value="${currentTemplateId}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #d2b48c; border-radius: 8px; font-size: 14px;"
+                               placeholder="請輸入您的Email模板ID">
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <button onclick="saveEmailSettings()" style="
+                            background: linear-gradient(135deg, #d2b48c, #8b4513);
+                            color: white;
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">儲存設定</button>
+                        
+                        <button onclick="closeEmailSettings()" style="
+                            background: #6c757d;
+                            color: white;
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">取消</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; text-align: left;">
+                        <h4 style="color: #8b4513; margin-bottom: 10px;">📋 設定說明：</h4>
+                        <ol style="color: #5d4e37; font-size: 14px; line-height: 1.6;">
+                            <li>User ID: 在EmailJS後台的Account頁面找到</li>
+                            <li>Service ID: 已預設為您的Gmail服務</li>
+                            <li>Template ID: 在Email Templates頁面找到</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // 儲存設定函數
+            window.saveEmailSettings = function() {
+                const userId = document.getElementById('emailjsUserId').value.trim();
+                const serviceId = document.getElementById('emailjsServiceId').value.trim();
+                const templateId = document.getElementById('emailjsTemplateId').value.trim();
+                
+                if (!userId || !templateId) {
+                    alert('請填寫完整的設定資訊！');
+                    return;
+                }
+                
+                localStorage.setItem('emailjs_user_id', userId);
+                localStorage.setItem('emailjs_service_id', serviceId);
+                localStorage.setItem('emailjs_template_id', templateId);
+                
+                // 重新初始化 EmailJS
+                emailjs.init(userId);
+                window.emailjsConfig = {
+                    serviceId: serviceId,
+                    templateId: templateId
+                };
+                
+                alert('Email設定已儲存！\n\n現在可以測試通知功能了。');
+                closeEmailSettings();
             };
             
-            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+            // 關閉設定函數
+            window.closeEmailSettings = function() {
+                document.body.removeChild(overlay);
+                delete window.saveEmailSettings;
+                delete window.closeEmailSettings;
+            };
+            
+            // 點擊背景關閉
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeEmailSettings();
+                }
+            });
+        }
+        
+        // 測試Email通知
+        function testNotification() {
+            if (!window.emailjsConfig || window.emailjsConfig.serviceId === 'YOUR_SERVICE_ID') {
+                alert('請先完成 EmailJS 設定！');
+                return;
+            }
+            
+            const userId = localStorage.getItem('emailjs_user_id');
+            if (!userId || userId === 'YOUR_EMAILJS_USER_ID') {
+                alert('請先設定 User ID (API Key)！');
+                return;
+            }
+            
+            const testData = {
+                to_email: 'sky850619@gmail.com', // 您的Email地址
+                owner_name: '測試客戶',
+                owner_phone: '0912-345-678',
+                owner_line: '測試LINE',
+                pet_count: '1',
+                pet_info: '測試寵物：小白 (狗狗)，年齡：3歲',
+                selected_plan: '60分鐘 - NT$ 800',
+                selected_time: '2024/1/15 上午10:00',
+                special_requests: '測試預約',
+                booking_time: new Date().toLocaleString('zh-TW')
+            };
+            
+            // 確保EmailJS已正確初始化
+            emailjs.init(userId);
+            
+            emailjs.send(window.emailjsConfig.serviceId, window.emailjsConfig.templateId, testData)
                 .then(function(response) {
-                    console.log('Email sent successfully:', response);
+                    alert('測試Email通知發送成功！\n請檢查您的信箱。');
+                    console.log('測試Email通知發送成功', response.status, response.text);
                 }, function(error) {
-                    console.error('Email sending failed:', error);
+                    let errorMessage = '測試Email通知發送失敗！\n\n';
+                    if (error.text) {
+                        errorMessage += '錯誤詳情：' + error.text;
+                    } else if (error.message) {
+                        errorMessage += '錯誤詳情：' + error.message;
+                    } else {
+                        errorMessage += '請檢查設定是否正確。';
+                    }
+                    alert(errorMessage);
+                    console.log('測試Email通知發送失敗', error);
                 });
         }
         
+        
+        
+        
+        // 開啟LINE整合設定
+        function openLineIntegrationSettings() {
+            // 創建設定對話框
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            overlay.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 20px;
+                    padding: 40px;
+                    max-width: 600px;
+                    width: 90%;
+                    text-align: center;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                ">
+                    <h2 style="color: #8b4513; margin-bottom: 30px;">📱 LINE整合設定</h2>
+                    
+                    <div style="text-align: left; margin-bottom: 30px;">
+                        <h3 style="color: #5d4e37; margin-bottom: 15px;">🎯 推薦方案：Email + LINE整合</h3>
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                            由於LINE Notify將於2025年3月終止服務，我們推薦使用Email + LINE整合的方式：
+                        </p>
+                        
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4 style="color: #8b4513; margin-bottom: 15px;">📋 設定步驟：</h4>
+                            <ol style="color: #5d4e37; line-height: 1.8; padding-left: 20px;">
+                                <li>確保Email通知已設定完成</li>
+                                <li>在LINE中開啟「設定」→「通知」→「Email通知」</li>
+                                <li>設定當收到來自 <strong>sky850619@gmail.com</strong> 的郵件時，LINE會自動通知</li>
+                                <li>或設定Gmail自動轉發到您的LINE</li>
+                            </ol>
+                        </div>
+                        
+                        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <h4 style="color: #856404; margin: 0 0 10px 0;">⚠️ 重要提醒</h4>
+                            <p style="color: #856404; margin: 0; font-size: 14px;">
+                                LINE Notify將於2025年3月31日終止服務，建議使用Email + LINE整合的方式。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: left; margin-bottom: 30px;">
+                        <h3 style="color: #5d4e37; margin-bottom: 15px;">🔧 其他LINE方案</h3>
+                        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #0066cc; margin: 0 0 10px 0;">📱 LINE Bot（進階）</h4>
+                            <p style="color: #0066cc; margin: 0; font-size: 14px;">
+                                如需更豐富的功能，可考慮建立LINE Bot，但設定較複雜。
+                            </p>
+                        </div>
+                        <div style="background: #f0f8e7; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #4caf50; margin: 0 0 10px 0;">📧 LINE官方帳號</h4>
+                            <p style="color: #4caf50; margin: 0; font-size: 14px;">
+                                適合商業用途，功能豐富但需要付費。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <button onclick="testLineIntegration()" style="
+                            background: linear-gradient(135deg, #00c300, #00a000);
+                            color: white;
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">測試LINE整合</button>
+                        
+                        <button onclick="closeLineIntegrationSettings()" style="
+                            background: #6c757d;
+                            color: white;
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 25px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">關閉</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // 測試LINE整合函數
+            window.testLineIntegration = function() {
+                alert('測試LINE整合功能！\n\n請確認：\n1. Email通知已設定完成\n2. LINE的Email通知已開啟\n3. 檢查您的LINE是否收到通知\n\n如果沒有收到，請檢查LINE的Email通知設定。');
+                closeLineIntegrationSettings();
+            };
+            
+            // 關閉設定函數
+            window.closeLineIntegrationSettings = function() {
+                document.body.removeChild(overlay);
+                delete window.testLineIntegration;
+                delete window.closeLineIntegrationSettings;
+            };
+            
+            // 點擊背景關閉
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeLineIntegrationSettings();
+                }
+            });
+        }
+        
         // 提交預約表單
-        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             if (!selectedPlan) {
@@ -1238,130 +2024,65 @@
                 return;
             }
             
+            if (selectedPetCount === 0) {
+                showStatusMessage('請選擇毛孩隻數', 'error');
+                return;
+            }
+            
             const formData = new FormData(this);
             const bookingData = Object.fromEntries(formData.entries());
+            bookingData.selectedPlan = document.getElementById('selectedPlan').value;
+            bookingData.selectedTimeSlot = document.getElementById('selectedTimeSlot').value;
+            bookingData.petCount = selectedPetCount;
+            
+            // 收集寵物資訊
+            bookingData.pets = [];
+            for (let i = 1; i <= selectedPetCount; i++) {
+                const petData = {
+                    name: bookingData[`petName${i}`],
+                    species: bookingData[`petSpecies${i}`],
+                    age: bookingData[`petAge${i}`] || ''
+                };
+                bookingData.pets.push(petData);
+                
+                // 清理原始欄位名稱
+                delete bookingData[`petName${i}`];
+                delete bookingData[`petSpecies${i}`];
+                delete bookingData[`petAge${i}`];
+            }
             
             try {
-                // 構建完整的預約資料
-                const fullBookingData = {
-                    ...bookingData,
-                    selectedPlan: selectedPlan,
-                    selectedTimeSlot: selectedTimeSlot,
-                    currentPetType: currentPetType
-                };
+                // 儲存預約
+                saveBooking(bookingData);
                 
-                // 儲存到本地儲存
-                const booking = saveBooking(fullBookingData);
+                // 自動封鎖預約時段
+                blockBookedTimeSlot(bookingData.selectedTimeSlot);
                 
                 // 發送Email通知
-                try {
-                    sendEmailNotification(bookingData);
-                } catch (error) {
-                    console.error('Email通知發送失敗:', error);
-                }
+                sendEmailNotification(bookingData);
                 
                 // 顯示成功訊息
-                showStatusMessage('預約成功！我們會盡快與您聯繫確認', 'success');
+                showStatusMessage('預約成功！我們會盡快與您聯繫', 'success');
                 
-                // 顯示LINE提醒對話框
+                // 顯示詳細提醒對話框
                 setTimeout(() => {
-                    alert('請於預約完成後 將毛孩照片傳至LINE對話框呦 📸');
+                    showBookingSuccessModal();
                 }, 1000);
                 
                 // 重置表單
                 this.reset();
-                selectedTimeSlot = null;
-                selectedPlan = null;
-                document.getElementById('selectedTimeSlot').value = '';
-                document.getElementById('selectedPlan').value = '';
-                document.getElementById('submitBtn').disabled = true;
-                
-                // 清除方案選擇
                 clearPlanSelection();
-                
-                // 重新載入時段
-                loadAvailableTimeSlots();
+                selectedTimeSlot = null;
+                selectedPetCount = 1;
+                document.getElementById('petCount').value = '';
+                document.getElementById('pricingSection').style.display = 'none';
+                document.getElementById('petInfoContainer').innerHTML = '';
                 
             } catch (error) {
                 console.error('預約失敗:', error);
                 showStatusMessage('預約失敗，請稍後再試', 'error');
             }
         });
-        
-        // 查看所有預約
-        function viewAllBookings() {
-            const bookings = JSON.parse(localStorage.getItem('petBookings') || '[]');
-            const bookingList = document.getElementById('bookingList');
-            
-            if (bookings.length === 0) {
-                bookingList.innerHTML = '<p>目前沒有預約記錄</p>';
-            } else {
-                bookingList.innerHTML = bookings.map(booking => `
-                    <div class="booking-item">
-                        <h4>${booking.ownerName} - ${booking.petName}</h4>
-                        <p><strong>聯絡電話：</strong>${booking.ownerPhone}</p>
-                        <p><strong>電子郵件：</strong>${booking.ownerEmail}</p>
-                        <p><strong>方案：</strong>${booking.selectedPlan.name} - ${booking.selectedPlan.price}</p>
-                        <p><strong>時段：</strong>${formatDate(new Date(booking.selectedTimeSlot.date))} ${booking.selectedTimeSlot.time}</p>
-                        <p><strong>預約時間：</strong>${new Date(booking.timestamp).toLocaleString()}</p>
-                        ${booking.specialRequests ? `<p><strong>特殊需求：</strong>${booking.specialRequests}</p>` : ''}
-                    </div>
-                `).join('');
-            }
-            
-            bookingList.style.display = bookingList.style.display === 'none' ? 'block' : 'none';
-        }
-        
-        // 匯出預約資料
-        function exportBookings() {
-            const bookings = JSON.parse(localStorage.getItem('petBookings') || '[]');
-            
-            if (bookings.length === 0) {
-                alert('目前沒有預約記錄可以匯出');
-                return;
-            }
-            
-            // 轉換為CSV格式
-            const csvContent = [
-                ['預約ID', '飼主姓名', '聯絡電話', '電子郵件', '寵物姓名', '寵物種類', '寵物年齡', '第二隻寵物', '方案', '時段', '預約時間', '特殊需求'],
-                ...bookings.map(booking => [
-                    booking.id,
-                    booking.ownerName,
-                    booking.ownerPhone,
-                    booking.ownerEmail,
-                    booking.petName,
-                    booking.petSpecies,
-                    booking.petAge || '',
-                    booking.petName2 ? `${booking.petName2} (${booking.petSpecies2})` : '',
-                    `${booking.selectedPlan.name} - ${booking.selectedPlan.price}`,
-                    `${formatDate(new Date(booking.selectedTimeSlot.date))} ${booking.selectedTimeSlot.time}`,
-                    new Date(booking.timestamp).toLocaleString(),
-                    booking.specialRequests || ''
-                ])
-            ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-            
-            // 下載CSV檔案
-            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `寵物溝通預約_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showStatusMessage('預約資料已匯出', 'success');
-        }
-        
-        // 清除所有預約
-        function clearAllBookings() {
-            if (confirm('確定要清除所有預約記錄嗎？此操作無法復原！')) {
-                localStorage.removeItem('petBookings');
-                showStatusMessage('所有預約記錄已清除', 'success');
-                document.getElementById('bookingList').style.display = 'none';
-            }
-        }
         
         // 開啟管理員面板
         function openAdminPanel() {
@@ -1391,25 +2112,83 @@
             }
         });
         
+        // 查看所有預約
+        function viewAllBookings() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const bookingList = document.getElementById('bookingList');
+            
+            if (bookings.length === 0) {
+                bookingList.innerHTML = '<p style="color: #666; text-align: center;">目前沒有預約記錄</p>';
+            } else {
+                bookingList.innerHTML = bookings.map(booking => `
+                    <div class="booking-item">
+                        <strong>${booking.ownerName}</strong> - ${booking.petName}<br>
+                        <small>${booking.selectedTimeSlot} | ${booking.selectedPlan}</small><br>
+                        <small>聯絡電話: ${booking.ownerPhone} | LINE: ${booking.ownerLine}</small>
+                    </div>
+                `).join('');
+            }
+            
+            bookingList.style.display = bookingList.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // 匯出預約資料
+        function exportBookings() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            if (bookings.length === 0) {
+                alert('目前沒有預約記錄可以匯出');
+                return;
+            }
+            
+            const csvContent = [
+                ['預約時間', '飼主姓名', '聯絡電話', 'LINE名稱', '寵物姓名', '寵物種類', '寵物年齡', '第二隻寵物', '選擇方案', '預約時段', '特殊需求'],
+                ...bookings.map(booking => [
+                    new Date(booking.timestamp).toLocaleString('zh-TW'),
+                    booking.ownerName,
+                    booking.ownerPhone,
+                    booking.ownerLine,
+                    booking.petName,
+                    booking.petSpecies,
+                    booking.petAge || '',
+                    booking.petName2 ? `${booking.petName2} (${booking.petSpecies2})` : '',
+                    booking.selectedPlan,
+                    booking.selectedTimeSlot,
+                    booking.specialRequests || ''
+                ])
+            ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `預約記錄_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+        
+        // 清除所有預約
+        function clearAllBookings() {
+            if (confirm('確定要清除所有預約記錄嗎？此操作無法復原。')) {
+                localStorage.removeItem('bookings');
+                showStatusMessage('所有預約記錄已清除', 'success');
+                document.getElementById('bookingList').style.display = 'none';
+            }
+        }
+        
         // 頁面載入時初始化
         window.addEventListener('load', () => {
-            // 綁定寵物類型切換事件
-            document.querySelectorAll('.pet-type-tab').forEach(tab => {
+            // 綁定方案類型切換事件
+            document.querySelectorAll('.pricing-type-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    switchPetType(tab.dataset.type);
+                    switchPricingType(tab.dataset.type);
                 });
             });
             
-            // 綁定方案選擇事件
-            document.querySelectorAll('.plan-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    selectPlan(option);
-                });
-            });
+            // 載入被封鎖的時段
+            loadBlockedTimes();
             
-            // 初始載入時段
-            loadAvailableTimeSlots();
+            // 初始化日期選項
+            updateDateOptions();
         });
     </script>
 </body>
 </html>
+
