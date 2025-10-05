@@ -1091,7 +1091,7 @@
             const note = document.getElementById('questionNote');
             
             if (questionCount) {
-                const price = parseInt(questionCount) * 300;
+                const price = parseInt(questionCount) * 350;
                 amount.textContent = `NT$ ${price.toLocaleString()}`;
                 
                 if (parseInt(questionCount) >= 3) {
@@ -1201,7 +1201,7 @@
             const maxQuestions = selectedPetCount * 3; // 每隻毛孩最多3題
             
             for (let i = 1; i <= maxQuestions; i++) {
-                const price = i * 300;
+                const price = i * 350;
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = `${i}題 - NT$ ${price.toLocaleString()}`;
