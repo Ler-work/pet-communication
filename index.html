@@ -1000,11 +1000,23 @@
                 
                 <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px;">
                     <h4 style="color: #856404; margin: 0 0 10px 0;">🚫 一鍵封鎖功能</h4>
-                    <p style="color: #856404; margin: 0 0 10px 0; font-size: 14px;">因為白天上班無法接案，可以一鍵封鎖當日所有時段</p>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <input type="date" id="bulkBlockDate" placeholder="選擇要封鎖的日期">
-                        <button onclick="blockAllDayTimeSlots()" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                            一鍵封鎖當日全時段
+                    <p style="color: #856404; margin: 0 0 15px 0; font-size: 14px;">勾選要封鎖的日期，然後一鍵封鎖</p>
+                    
+                    <!-- 日期勾選清單 -->
+                    <div id="dateChecklist" style="max-height: 300px; overflow-y: auto; border: 1px solid #d2b48c; border-radius: 5px; padding: 10px; background: #f8f9fa; margin-bottom: 15px;">
+                        <!-- 日期勾選項目將在這裡動態生成 -->
+                    </div>
+                    
+                    <!-- 操作按鈕 -->
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: center;">
+                        <button onclick="selectAllDates()" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                            全選
+                        </button>
+                        <button onclick="unselectAllDates()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                            全不選
+                        </button>
+                        <button onclick="blockCheckedDates()" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                            封鎖已勾選日期
                         </button>
                     </div>
                 </div>
@@ -1056,6 +1068,7 @@
         let currentPricingType = 'question';
         let selectedPetCount = 1;
         let blockedTimes = [];
+        let selectedDates = []; // 用於儲存不連續日期選擇
         
         // 關閉預約須知小視窗
         function closeIntroModal() {
@@ -1452,6 +1465,236 @@
             }
         }
         
+        // 多日封鎖功能
+        function blockMultipleDays() {
+            const startDate = document.getElementById('bulkBlockStartDate').value;
+            const endDate = document.getElementById('bulkBlockEndDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('請選擇開始日期和結束日期');
+                return;
+            }
+            
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            if (start > end) {
+                alert('開始日期不能晚於結束日期');
+                return;
+            }
+            
+            // 計算日期範圍
+            const dateRange = [];
+            const current = new Date(start);
+            while (current <= end) {
+                // 跳過週日
+                if (current.getDay() !== 0) {
+                    dateRange.push(new Date(current));
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            
+            if (dateRange.length === 0) {
+                alert('選擇的日期範圍內沒有工作日（已自動跳過週日）');
+                return;
+            }
+            
+            // 確認操作
+            const dateList = dateRange.map(d => formatDateForSelect(d)).join('\n');
+            if (!confirm(`確定要封鎖以下 ${dateRange.length} 天的所有時段嗎？\n\n${dateList}\n\n這將封鎖每天的所有時段，這些日期將從預約選項中完全消失！`)) {
+                return;
+            }
+            
+            // 所有可用的時段
+            const allTimeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '19:00', '20:00'];
+            let totalAddedCount = 0;
+            let processedDates = [];
+            
+            dateRange.forEach(date => {
+                const dateStr = formatDateForSelect(date);
+                let dateAddedCount = 0;
+                
+                allTimeSlots.forEach(time => {
+                    // 檢查是否已經被封鎖
+                    const isAlreadyBlocked = blockedTimes.some(blocked => 
+                        blocked.date === dateStr && blocked.time === time
+                    );
+                    
+                    if (!isAlreadyBlocked) {
+                        blockedTimes.push({
+                            date: dateStr,
+                            time: time,
+                            reason: '多日封鎖',
+                            timestamp: new Date().toISOString(),
+                            bookingId: null
+                        });
+                        dateAddedCount++;
+                        totalAddedCount++;
+                    }
+                });
+                
+                if (dateAddedCount > 0) {
+                    processedDates.push(dateStr);
+                }
+            });
+            
+            if (totalAddedCount > 0) {
+                localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
+                updateBlockedTimesDisplay();
+                
+                // 清空日期選擇
+                document.getElementById('bulkBlockStartDate').value = '';
+                document.getElementById('bulkBlockEndDate').value = '';
+                
+                alert(`成功封鎖 ${processedDates.length} 天的 ${totalAddedCount} 個時段！\n\n已處理的日期：\n${processedDates.join('\n')}\n\n這些日期已從預約選項中完全移除！`);
+                
+                // 重新更新日期選項（這會讓被封鎖的日期消失）
+                updateDateOptions();
+                
+                // 如果已選擇方案，重新更新時段
+                if (selectedPlan) {
+                    updateTimeSlots();
+                }
+            } else {
+                alert('選擇的日期範圍內所有時段都已經被封鎖了！');
+            }
+        }
+        
+        // 生成日期勾選清單
+        function generateDateChecklist() {
+            const container = document.getElementById('dateChecklist');
+            const today = new Date();
+            const dateOptions = [];
+            
+            // 生成未來14天的日期選項
+            for (let i = 1; i <= 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                // 跳過週日
+                if (date.getDay() === 0) continue;
+                
+                const dateStr = formatDateForSelect(date);
+                const isFullyBlocked = isDateFullyBlocked(dateStr);
+                
+                dateOptions.push({
+                    date: date,
+                    dateStr: dateStr,
+                    isFullyBlocked: isFullyBlocked
+                });
+            }
+            
+            if (dateOptions.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">沒有可用的日期</p>';
+                return;
+            }
+            
+            const checklistHTML = dateOptions.map((dateInfo, index) => {
+                const isDisabled = dateInfo.isFullyBlocked;
+                const checkboxId = `dateCheck_${index}`;
+                
+                return `
+                    <div style="display: flex; align-items: center; padding: 8px; background: ${isDisabled ? '#f8f9fa' : 'white'}; border-radius: 5px; margin-bottom: 5px; border: 1px solid #d2b48c; ${isDisabled ? 'opacity: 0.6;' : ''}">
+                        <input type="checkbox" 
+                               id="${checkboxId}" 
+                               value="${dateInfo.dateStr}"
+                               ${isDisabled ? 'disabled' : ''}
+                               style="margin-right: 10px; transform: scale(1.2);">
+                        <label for="${checkboxId}" style="flex: 1; color: ${isDisabled ? '#6c757d' : '#8b4513'}; font-weight: bold; cursor: ${isDisabled ? 'not-allowed' : 'pointer'};">
+                            ${dateInfo.dateStr} ${isDisabled ? '(已完全封鎖)' : ''}
+                        </label>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = checklistHTML;
+        }
+        
+        // 全選日期
+        function selectAllDates() {
+            const checkboxes = document.querySelectorAll('#dateChecklist input[type="checkbox"]:not([disabled])');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+        
+        // 全不選日期
+        function unselectAllDates() {
+            const checkboxes = document.querySelectorAll('#dateChecklist input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+        
+        // 封鎖已勾選的日期
+        function blockCheckedDates() {
+            const checkedBoxes = document.querySelectorAll('#dateChecklist input[type="checkbox"]:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('請先勾選要封鎖的日期');
+                return;
+            }
+            
+            const selectedDates = Array.from(checkedBoxes).map(checkbox => checkbox.value);
+            
+            // 確認操作
+            if (!confirm(`確定要封鎖以下 ${selectedDates.length} 天的所有時段嗎？\n\n${selectedDates.join('\n')}\n\n這將封鎖每天的所有時段，這些日期將從預約選項中完全消失！`)) {
+                return;
+            }
+            
+            // 所有可用的時段
+            const allTimeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '19:00', '20:00'];
+            let totalAddedCount = 0;
+            let processedDates = [];
+            
+            selectedDates.forEach(dateStr => {
+                let dateAddedCount = 0;
+                
+                allTimeSlots.forEach(time => {
+                    // 檢查是否已經被封鎖
+                    const isAlreadyBlocked = blockedTimes.some(blocked => 
+                        blocked.date === dateStr && blocked.time === time
+                    );
+                    
+                    if (!isAlreadyBlocked) {
+                        blockedTimes.push({
+                            date: dateStr,
+                            time: time,
+                            reason: '勾選封鎖',
+                            timestamp: new Date().toISOString(),
+                            bookingId: null
+                        });
+                        dateAddedCount++;
+                        totalAddedCount++;
+                    }
+                });
+                
+                if (dateAddedCount > 0) {
+                    processedDates.push(dateStr);
+                }
+            });
+            
+            if (totalAddedCount > 0) {
+                localStorage.setItem('blockedTimes', JSON.stringify(blockedTimes));
+                updateBlockedTimesDisplay();
+                
+                // 重新生成日期清單（更新封鎖狀態）
+                generateDateChecklist();
+                
+                alert(`成功封鎖 ${processedDates.length} 天的 ${totalAddedCount} 個時段！\n\n已處理的日期：\n${processedDates.join('\n')}\n\n這些日期已從預約選項中完全移除！`);
+                
+                // 重新更新日期選項（這會讓被封鎖的日期消失）
+                updateDateOptions();
+                
+                // 如果已選擇方案，重新更新時段
+                if (selectedPlan) {
+                    updateTimeSlots();
+                }
+            } else {
+                alert('選擇的日期中所有時段都已經被封鎖了！');
+            }
+        }
+        
         // 寵物類型切換
         function switchPetType(type) {
             currentPetType = type;
@@ -1583,10 +1826,22 @@
             
             timeSelect.innerHTML = '<option value="">請選擇時間</option>';
             
+            // 根據方案時長設定不同的時段
             let timeSlots = [];
+            const duration = selectedPlan ? parseInt(selectedPlan.duration) : 60;
             
-            // 統一使用2小時間隔的時段
-            timeSlots = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '21:00'];
+            if (duration <= 60) {
+                // 60分鐘方案：使用1小時間隔
+                timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '19:00', '20:00'];
+            } else if (duration <= 90) {
+                // 90分鐘方案：使用1.5小時間隔
+                timeSlots = ['09:00', '10:30', '14:00', '15:30', '19:00', '20:30'];
+            } else {
+                // 120分鐘方案：使用2小時間隔
+                timeSlots = ['09:00', '11:00', '14:00', '16:00', '19:00', '21:00'];
+            }
+            
+            let availableSlots = 0;
             
             timeSlots.forEach(time => {
                 // 檢查是否被封鎖
@@ -1599,8 +1854,14 @@
                     option.value = time;
                     option.textContent = formatTimeDisplay(time);
                     timeSelect.appendChild(option);
+                    availableSlots++;
                 }
             });
+            
+            // 如果沒有可用時段，顯示提示
+            if (availableSlots === 0) {
+                timeSelect.innerHTML = '<option value="">該日期無可用時段</option>';
+            }
         }
         
         // 選擇時段
@@ -1636,13 +1897,13 @@
         
         // 格式化時間顯示
         function formatTimeDisplay(time) {
-            const hour = parseInt(time.split(':')[0]);
+            const [hour, minute] = time.split(':').map(Number);
             if (hour < 12) {
-                return `上午${hour}:00`;
+                return `上午${hour}:${minute.toString().padStart(2, '0')}`;
             } else if (hour === 12) {
-                return `下午12:00`;
+                return `下午12:${minute.toString().padStart(2, '0')}`;
             } else {
-                return `下午${hour - 12}:00`;
+                return `下午${hour - 12}:${minute.toString().padStart(2, '0')}`;
             }
         }
         
@@ -2191,6 +2452,7 @@
             const adminOverlay = document.getElementById('adminOverlay');
             adminOverlay.style.display = 'flex';
             loadBlockedTimes();
+            generateDateChecklist(); // 生成日期勾選清單
         }
         
         // 關閉管理員面板
