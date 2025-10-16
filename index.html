@@ -1036,6 +1036,7 @@
                 <button class="admin-btn" onclick="viewAllBookings()">查看所有預約</button>
                 <button class="admin-btn" onclick="exportBookings()">匯出預約資料</button>
                 <button class="admin-btn" onclick="testBlockingFunction()">測試封鎖功能</button>
+                <button class="admin-btn" onclick="diagnoseSystem()" style="background: #17a2b8; color: white;">🔍 系統診斷</button>
                 <button class="admin-btn" onclick="clearAllBookings()">清除所有預約</button>
                 <div id="bookingList" class="booking-list" style="display: none;"></div>
             </div>
@@ -1925,11 +1926,52 @@
         
         // 儲存預約
         function saveBooking(bookingData) {
-            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            bookingData.id = Date.now();
-            bookingData.timestamp = new Date().toISOString();
-            bookings.push(bookingData);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
+            console.log('=== 開始儲存預約 ===');
+            console.log('預約資料:', bookingData);
+            
+            try {
+                // 檢查localStorage是否可用
+                if (typeof(Storage) === "undefined") {
+                    console.error('localStorage 不支援');
+                    showStatusMessage('⚠️ 瀏覽器不支援資料儲存，請使用其他瀏覽器', 'error');
+                    return false;
+                }
+                
+                // 讀取現有預約
+                const existingBookings = localStorage.getItem('bookings');
+                console.log('現有預約資料:', existingBookings);
+                
+                const bookings = JSON.parse(existingBookings || '[]');
+                console.log('解析後的預約陣列:', bookings);
+                
+                // 添加預約資料
+                bookingData.id = Date.now();
+                bookingData.timestamp = new Date().toISOString();
+                bookings.push(bookingData);
+                
+                console.log('準備儲存的預約陣列:', bookings);
+                
+                // 儲存到localStorage
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                
+                // 驗證儲存是否成功
+                const savedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                console.log('儲存後驗證:', savedBookings);
+                console.log('儲存後預約總數:', savedBookings.length);
+                
+                if (savedBookings.length === bookings.length) {
+                    console.log('✅ 預約資料儲存成功');
+                    return true;
+                } else {
+                    console.error('❌ 儲存驗證失敗');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ 儲存預約資料失敗:', error);
+                console.error('錯誤詳情:', error.message);
+                showStatusMessage('⚠️ 預約資料儲存失敗，請重新嘗試', 'error');
+                return false;
+            }
         }
         
         // 自動封鎖預約時段
@@ -1995,7 +2037,12 @@
             // 檢查EmailJS是否已正確設定
             if (!window.isEmailConfigured()) {
                 console.error('EmailJS 設定不完整，無法發送通知');
-                showStatusMessage('Email通知設定不完整，但預約已儲存', 'info');
+                console.log('EmailJS設定狀態:', {
+                    userId: localStorage.getItem('emailjs_user_id'),
+                    serviceId: localStorage.getItem('emailjs_service_id'),
+                    templateId: localStorage.getItem('emailjs_template_id')
+                });
+                showStatusMessage('⚠️ Email通知設定不完整，但預約已儲存。請到管理員後台完成Email設定。', 'warning');
                 return;
             }
             
@@ -2319,6 +2366,83 @@
             return status;
         }
         
+        // 系統診斷功能
+        function diagnoseSystem() {
+            const status = checkSystemStatus();
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const blockedTimes = JSON.parse(localStorage.getItem('blockedTimes') || '[]');
+            
+            // 創建診斷報告
+            let report = '🔍 系統診斷報告\n\n';
+            
+            // 基本資訊
+            report += '📊 基本資訊：\n';
+            report += `• 預約記錄數量：${status.bookingsCount}\n`;
+            report += `• 封鎖時段數量：${status.blockedTimesCount}\n`;
+            report += `• Email設定狀態：${status.emailConfigured ? '✅ 完整' : '❌ 不完整'}\n\n`;
+            
+            // 預約記錄詳情
+            if (bookings.length > 0) {
+                report += '📋 最近預約記錄：\n';
+                bookings.slice(-3).forEach((booking, index) => {
+                    report += `${index + 1}. ${booking.ownerName} - ${booking.selectedTimeSlot}\n`;
+                    report += `   時間：${new Date(booking.timestamp).toLocaleString('zh-TW')}\n`;
+                    report += `   方案：${booking.selectedPlan}\n\n`;
+                });
+            } else {
+                report += '⚠️ 目前沒有任何預約記錄\n\n';
+            }
+            
+            // 封鎖時段詳情
+            if (blockedTimes.length > 0) {
+                report += '🚫 最近封鎖時段：\n';
+                blockedTimes.slice(-5).forEach((blocked, index) => {
+                    report += `${index + 1}. ${blocked.date} ${blocked.time} (${blocked.reason})\n`;
+                });
+                report += '\n';
+            }
+            
+            // 檢查可能問題
+            report += '🔧 問題檢查：\n';
+            
+            if (bookings.length === 0) {
+                report += '❌ 沒有預約記錄 - 可能原因：\n';
+                report += '   • 客戶沒有成功提交預約\n';
+                report += '   • 表單驗證失敗\n';
+                report += '   • JavaScript錯誤\n';
+                report += '   • 使用了錯誤的檔案（應使用簡易版）\n\n';
+            }
+            
+            if (!status.emailConfigured) {
+                report += '⚠️ Email通知未設定 - 建議：\n';
+                report += '   • 點擊「Email通知設定」完成設定\n';
+                report += '   • 或使用「測試Email通知」檢查設定\n\n';
+            }
+            
+            // 建議操作
+            report += '💡 建議操作：\n';
+            report += '1. 確認使用「預約工具-簡易版.html」\n';
+            report += '2. 檢查瀏覽器控制台是否有錯誤訊息\n';
+            report += '3. 嘗試測試預約功能\n';
+            report += '4. 檢查客戶是否看到成功訊息\n';
+            
+            // 顯示診斷報告
+            alert(report);
+            
+            // 同時在控制台輸出詳細資訊
+            console.log('=== 詳細診斷資訊 ===');
+            console.log('所有預約記錄:', bookings);
+            console.log('所有封鎖時段:', blockedTimes);
+            console.log('localStorage 內容:', {
+                bookings: localStorage.getItem('bookings'),
+                blockedTimes: localStorage.getItem('blockedTimes'),
+                emailjs_user_id: localStorage.getItem('emailjs_user_id'),
+                emailjs_service_id: localStorage.getItem('emailjs_service_id'),
+                emailjs_template_id: localStorage.getItem('emailjs_template_id')
+            });
+            console.log('==================');
+        }
+        
         
         
         
@@ -2483,15 +2607,28 @@
             
             try {
                 // 儲存預約（這是最重要的步驟）
-                saveBooking(bookingData);
-                console.log('預約資料已儲存:', bookingData);
+                console.log('=== 開始處理預約提交 ===');
+                const saveSuccess = saveBooking(bookingData);
+                
+                if (!saveSuccess) {
+                    console.error('❌ 預約儲存失敗');
+                    showStatusMessage('❌ 預約儲存失敗，請重新嘗試', 'error');
+                    return;
+                }
+                
+                console.log('✅ 預約資料儲存成功');
                 
                 // 自動封鎖預約時段
                 blockBookedTimeSlot(bookingData.selectedTimeSlot);
                 console.log('時段已封鎖');
                 
+                // 立即驗證localStorage中的資料
+                const verifyBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                console.log('立即驗證 - localStorage中的預約數量:', verifyBookings.length);
+                console.log('立即驗證 - 最新預約:', verifyBookings[verifyBookings.length - 1]);
+                
                 // 顯示成功訊息（不依賴Email發送）
-                showStatusMessage('預約成功！我們會盡快與您聯繫', 'success');
+                showStatusMessage('✅ 預約成功！我們會盡快與您聯繫', 'success');
                 
                 // 顯示詳細提醒對話框
                 setTimeout(() => {
@@ -2692,6 +2829,24 @@
             
             // 初始化日期選項
             updateDateOptions();
+            
+            // 診斷系統狀態
+            console.log('=== 系統診斷 ===');
+            console.log('EmailJS設定:', {
+                userId: localStorage.getItem('emailjs_user_id'),
+                serviceId: localStorage.getItem('emailjs_service_id'),
+                templateId: localStorage.getItem('emailjs_template_id'),
+                isConfigured: window.isEmailConfigured ? window.isEmailConfigured() : '函數未定義'
+            });
+            
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            console.log('預約記錄數量:', bookings.length);
+            console.log('localStorage支援:', typeof(Storage) !== "undefined");
+            
+            // 檢查手機環境
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            console.log('是否為手機環境:', isMobile);
+            console.log('瀏覽器:', navigator.userAgent);
         });
     </script>
 </body>
