@@ -1050,16 +1050,32 @@
             const emailjsServiceId = localStorage.getItem('emailjs_service_id') || "service_052vkz5";
             const emailjsTemplateId = localStorage.getItem('emailjs_template_id') || "YOUR_TEMPLATE_ID";
             
-            // 使用新版本的EmailJS初始化方式
-            if (emailjsUserId !== "YOUR_EMAILJS_USER_ID") {
-                emailjs.init(emailjsUserId);
-            }
-            
             // 儲存設定到全域變數
             window.emailjsConfig = {
                 serviceId: emailjsServiceId,
-                templateId: emailjsTemplateId
+                templateId: emailjsTemplateId,
+                userId: emailjsUserId
             };
+            
+            // 檢查設定是否完整
+            window.isEmailConfigured = function() {
+                return emailjsUserId !== "YOUR_EMAILJS_USER_ID" && 
+                       emailjsTemplateId !== "YOUR_TEMPLATE_ID" &&
+                       emailjsUserId && 
+                       emailjsTemplateId;
+            };
+            
+            // 如果設定完整，初始化 EmailJS
+            if (window.isEmailConfigured()) {
+                try {
+                    emailjs.init(emailjsUserId);
+                    console.log('EmailJS 初始化成功');
+                } catch (error) {
+                    console.error('EmailJS 初始化失敗:', error);
+                }
+            } else {
+                console.warn('EmailJS 設定不完整，請完成設定');
+            }
         })();
         
         // 全域變數
@@ -1976,6 +1992,13 @@
         
         // 發送Email通知
         function sendEmailNotification(bookingData) {
+            // 檢查EmailJS是否已正確設定
+            if (!window.isEmailConfigured()) {
+                console.error('EmailJS 設定不完整，無法發送通知');
+                showStatusMessage('Email通知設定不完整，但預約已儲存', 'info');
+                return;
+            }
+            
             // 構建寵物資訊字串
             let petInfo = '';
             bookingData.pets.forEach((pet, index) => {
@@ -1999,11 +2022,32 @@
                 booking_time: new Date().toLocaleString('zh-TW')
             };
             
+            console.log('準備發送Email通知，參數：', templateParams);
+            
+            // 確保EmailJS已正確初始化
+            if (window.emailjsConfig.userId && window.emailjsConfig.userId !== "YOUR_EMAILJS_USER_ID") {
+                try {
+                    emailjs.init(window.emailjsConfig.userId);
+                } catch (error) {
+                    console.error('EmailJS 重新初始化失敗:', error);
+                }
+            }
+            
             emailjs.send(window.emailjsConfig.serviceId, window.emailjsConfig.templateId, templateParams)
                 .then(function(response) {
                     console.log('Email 發送成功', response.status, response.text);
+                    showStatusMessage('預約成功！Email通知已發送', 'success');
                 }, function(error) {
-                    console.log('Email 發送失敗', error);
+                    console.error('Email 發送失敗', error);
+                    let errorMessage = 'Email通知發送失敗，但預約已儲存。';
+                    
+                    if (error.text) {
+                        errorMessage += ' 錯誤詳情：' + error.text;
+                    } else if (error.message) {
+                        errorMessage += ' 錯誤詳情：' + error.message;
+                    }
+                    
+                    showStatusMessage(errorMessage, 'error');
                 });
         }
         
@@ -2200,14 +2244,12 @@
         
         // 測試Email通知
         function testNotification() {
-            if (!window.emailjsConfig || window.emailjsConfig.serviceId === 'YOUR_SERVICE_ID') {
-                alert('請先完成 EmailJS 設定！');
-                return;
-            }
+            // 檢查系統狀態
+            const systemStatus = checkSystemStatus();
+            console.log('系統狀態檢查:', systemStatus);
             
-            const userId = localStorage.getItem('emailjs_user_id');
-            if (!userId || userId === 'YOUR_EMAILJS_USER_ID') {
-                alert('請先設定 User ID (API Key)！');
+            if (!window.isEmailConfigured()) {
+                alert('EmailJS 設定不完整！\n\n請檢查：\n1. User ID 是否已設定\n2. Template ID 是否已設定\n3. 設定是否正確儲存');
                 return;
             }
             
@@ -2224,12 +2266,20 @@
                 booking_time: new Date().toLocaleString('zh-TW')
             };
             
+            console.log('測試Email發送，參數：', testData);
+            console.log('EmailJS設定：', window.emailjsConfig);
+            
             // 確保EmailJS已正確初始化
-            emailjs.init(userId);
+            try {
+                emailjs.init(window.emailjsConfig.userId);
+                console.log('EmailJS 重新初始化成功');
+            } catch (error) {
+                console.error('EmailJS 初始化失敗:', error);
+            }
             
             emailjs.send(window.emailjsConfig.serviceId, window.emailjsConfig.templateId, testData)
                 .then(function(response) {
-                    alert('測試Email通知發送成功！\n請檢查您的信箱。');
+                    alert('測試Email通知發送成功！\n請檢查您的信箱。\n\n狀態：' + response.status);
                     console.log('測試Email通知發送成功', response.status, response.text);
                 }, function(error) {
                     let errorMessage = '測試Email通知發送失敗！\n\n';
@@ -2240,9 +2290,33 @@
                     } else {
                         errorMessage += '請檢查設定是否正確。';
                     }
+                    errorMessage += '\n\n建議檢查：\n1. EmailJS 帳號設定\n2. Service ID 是否正確\n3. Template ID 是否正確\n4. 網路連線是否正常';
                     alert(errorMessage);
                     console.log('測試Email通知發送失敗', error);
                 });
+        }
+        
+        // 檢查系統狀態
+        function checkSystemStatus() {
+            const status = {
+                emailConfigured: window.isEmailConfigured(),
+                userId: localStorage.getItem('emailjs_user_id'),
+                serviceId: localStorage.getItem('emailjs_service_id'),
+                templateId: localStorage.getItem('emailjs_template_id'),
+                bookingsCount: JSON.parse(localStorage.getItem('bookings') || '[]').length,
+                blockedTimesCount: JSON.parse(localStorage.getItem('blockedTimes') || '[]').length
+            };
+            
+            console.log('=== 系統狀態檢查 ===');
+            console.log('Email設定完整:', status.emailConfigured);
+            console.log('User ID:', status.userId);
+            console.log('Service ID:', status.serviceId);
+            console.log('Template ID:', status.templateId);
+            console.log('預約記錄數量:', status.bookingsCount);
+            console.log('封鎖時段數量:', status.blockedTimesCount);
+            console.log('==================');
+            
+            return status;
         }
         
         
@@ -2408,22 +2482,29 @@
             }
             
             try {
-                // 儲存預約
+                // 儲存預約（這是最重要的步驟）
                 saveBooking(bookingData);
+                console.log('預約資料已儲存:', bookingData);
                 
                 // 自動封鎖預約時段
                 blockBookedTimeSlot(bookingData.selectedTimeSlot);
+                console.log('時段已封鎖');
                 
-                // 發送Email通知
-                sendEmailNotification(bookingData);
-                
-                // 顯示成功訊息
+                // 顯示成功訊息（不依賴Email發送）
                 showStatusMessage('預約成功！我們會盡快與您聯繫', 'success');
                 
                 // 顯示詳細提醒對話框
                 setTimeout(() => {
                     showBookingSuccessModal();
                 }, 1000);
+                
+                // 嘗試發送Email通知（不影響預約成功）
+                try {
+                    sendEmailNotification(bookingData);
+                } catch (emailError) {
+                    console.error('Email發送失敗，但預約已成功儲存:', emailError);
+                    // 不顯示錯誤訊息給用戶，因為預約已經成功
+                }
                 
                 // 重置表單
                 this.reset();
@@ -2474,16 +2555,64 @@
             const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
             const bookingList = document.getElementById('bookingList');
             
+            console.log('載入預約記錄:', bookings);
+            
             if (bookings.length === 0) {
                 bookingList.innerHTML = '<p style="color: #666; text-align: center;">目前沒有預約記錄</p>';
             } else {
-                bookingList.innerHTML = bookings.map(booking => `
-                    <div class="booking-item">
-                        <strong>${booking.ownerName}</strong> - ${booking.petName}<br>
-                        <small>${booking.selectedTimeSlot} | ${booking.selectedPlan}</small><br>
-                        <small>聯絡電話: ${booking.ownerPhone} | LINE: ${booking.ownerLine}</small>
-                    </div>
-                `).join('');
+                bookingList.innerHTML = bookings.map((booking, index) => {
+                    // 構建寵物資訊字串
+                    let petInfo = '';
+                    if (booking.pets && booking.pets.length > 0) {
+                        petInfo = booking.pets.map((pet, petIndex) => 
+                            `第${petIndex + 1}隻：${pet.name} (${pet.species})${pet.age ? `，${pet.age}` : ''}`
+                        ).join('<br>');
+                    } else {
+                        // 兼容舊格式
+                        petInfo = `${booking.petName || '未知'} (${booking.petSpecies || '未知'})`;
+                        if (booking.petAge) {
+                            petInfo += `，${booking.petAge}`;
+                        }
+                    }
+                    
+                    return `
+                        <div class="booking-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <strong style="color: #8b4513; font-size: 1.1em;">${booking.ownerName}</strong>
+                                    <span style="color: #666; font-size: 0.9em; margin-left: 10px;">預約時間：${new Date(booking.timestamp).toLocaleString('zh-TW')}</span>
+                                </div>
+                                <div style="color: #cd853f; font-weight: bold;">#${index + 1}</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 8px;">
+                                <strong>寵物資訊：</strong><br>
+                                <span style="color: #5d4e37;">${petInfo}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 8px;">
+                                <strong>預約時段：</strong> ${booking.selectedTimeSlot}<br>
+                                <strong>選擇方案：</strong> ${booking.selectedPlan}
+                            </div>
+                            
+                            <div style="margin-bottom: 8px;">
+                                <strong>聯絡方式：</strong><br>
+                                電話：${booking.ownerPhone} | LINE：${booking.ownerLine}
+                            </div>
+                            
+                            ${booking.specialRequests ? `
+                                <div style="margin-bottom: 8px;">
+                                    <strong>特殊需求：</strong><br>
+                                    <span style="color: #5d4e37; font-style: italic;">${booking.specialRequests}</span>
+                                </div>
+                            ` : ''}
+                            
+                            <div style="border-top: 1px solid #d2b48c; padding-top: 8px; margin-top: 10px; font-size: 0.9em; color: #666;">
+                                預約ID：${booking.id || 'N/A'} | 毛孩數量：${booking.petCount || '1'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
             
             bookingList.style.display = bookingList.style.display === 'none' ? 'block' : 'none';
@@ -2497,21 +2626,38 @@
                 return;
             }
             
+            console.log('準備匯出預約記錄:', bookings);
+            
             const csvContent = [
-                ['預約時間', '飼主姓名', '聯絡電話', 'LINE名稱', '寵物姓名', '寵物種類', '寵物年齡', '第二隻寵物', '選擇方案', '預約時段', '特殊需求'],
-                ...bookings.map(booking => [
-                    new Date(booking.timestamp).toLocaleString('zh-TW'),
-                    booking.ownerName,
-                    booking.ownerPhone,
-                    booking.ownerLine,
-                    booking.petName,
-                    booking.petSpecies,
-                    booking.petAge || '',
-                    booking.petName2 ? `${booking.petName2} (${booking.petSpecies2})` : '',
-                    booking.selectedPlan,
-                    booking.selectedTimeSlot,
-                    booking.specialRequests || ''
-                ])
+                ['預約時間', '飼主姓名', '聯絡電話', 'LINE名稱', '毛孩數量', '寵物資訊', '選擇方案', '預約時段', '特殊需求', '預約ID'],
+                ...bookings.map(booking => {
+                    // 構建寵物資訊字串
+                    let petInfo = '';
+                    if (booking.pets && booking.pets.length > 0) {
+                        petInfo = booking.pets.map((pet, index) => 
+                            `第${index + 1}隻：${pet.name} (${pet.species})${pet.age ? `，${pet.age}` : ''}`
+                        ).join(' | ');
+                    } else {
+                        // 兼容舊格式
+                        petInfo = `${booking.petName || '未知'} (${booking.petSpecies || '未知'})`;
+                        if (booking.petAge) {
+                            petInfo += `，${booking.petAge}`;
+                        }
+                    }
+                    
+                    return [
+                        new Date(booking.timestamp).toLocaleString('zh-TW'),
+                        booking.ownerName,
+                        booking.ownerPhone,
+                        booking.ownerLine,
+                        booking.petCount || '1',
+                        petInfo,
+                        booking.selectedPlan,
+                        booking.selectedTimeSlot,
+                        booking.specialRequests || '',
+                        booking.id || 'N/A'
+                    ];
+                })
             ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
             
             const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -2519,6 +2665,8 @@
             link.href = URL.createObjectURL(blob);
             link.download = `預約記錄_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
+            
+            console.log('預約記錄已匯出');
         }
         
         // 清除所有預約
